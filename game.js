@@ -68,11 +68,11 @@
 
   const DifficultyPresets = {
     [Difficulty.Easy]: {
-      speed: 2.8,
-      spacing: 260,
-      minGap: 170,
-      maxGap: 210,
-      collisionPadding: 6,
+      speed: 2.6,
+      spacing: 280,
+      minGap: 180,
+      maxGap: 220,
+      collisionPadding: 8,
     },
     [Difficulty.Medium]: {
       speed: 3.2,
@@ -877,26 +877,33 @@
       drawTitle();
       drawDifficultyMenu();
     } else if (gameState === State.GameOver) {
+      // Title
       ctx.font = "800 42px system-ui, -apple-system, Segoe UI, Roboto";
-      ctx.fillText("Game Over", VIEW_WIDTH / 2, VIEW_HEIGHT * 0.36);
+      ctx.fillText("Game Over", VIEW_WIDTH / 2, VIEW_HEIGHT * 0.32);
+      // Big score highlight
+      ctx.font = "900 66px system-ui, -apple-system, Segoe UI, Roboto";
+      ctx.fillText(`Score ${score}`, VIEW_WIDTH / 2, VIEW_HEIGHT * 0.42);
+      // Best and share prompt
       ctx.font = "600 22px system-ui, -apple-system, Segoe UI, Roboto";
-      ctx.fillText(
-        `Score ${score}  ·  Best ${best}`,
-        VIEW_WIDTH / 2,
-        VIEW_HEIGHT * 0.42
-      );
-      // Buttons: Play Again and Back to Menu
+      ctx.fillText(`Best ${best}`, VIEW_WIDTH / 2, VIEW_HEIGHT * 0.48);
+      ctx.font = "600 18px system-ui, -apple-system, Segoe UI, Roboto";
+      ctx.fillText("Share this to challenge your friends!", VIEW_WIDTH / 2, VIEW_HEIGHT * 0.53);
+
+      // Buttons: Play Again, Back to Menu, Share (screenshot)
       const w = 340;
       const h = 54;
       const x = (VIEW_WIDTH - w) / 2;
-      const playY = VIEW_HEIGHT * 0.58; // center Y
-      const menuY = playY + h + 12; // below
+      const playY = VIEW_HEIGHT * 0.62;
+      const menuY = playY + h + 12;
+      const shareY = menuY + h + 12;
       drawCenteredButton("Play Again", playY);
       drawCenteredButton("Back to Menu", menuY);
+      drawCenteredButton("Share Screenshot", shareY);
       // Register hitboxes for clicks
       gameOverHitboxes = [
         { type: "play", x, y: playY - h / 2, w, h },
         { type: "menu", x, y: menuY - h / 2, w, h },
+        { type: "share", x, y: shareY - h / 2, w, h },
       ];
     }
     ctx.restore();
@@ -1194,11 +1201,48 @@
           audio.startMusic();
         } else if (b.type === "menu") {
           gameState = State.Menu;
+        } else if (b.type === "share") {
+          shareScore();
         }
         return true;
       }
     }
     return false;
+  }
+
+  async function shareScore() {
+    try {
+      const blob = await canvasToBlob(canvas);
+      const files = [new File([blob], "flipspider-score.png", { type: blob.type })];
+      const shareData = {
+        title: "Flip Spider",
+        text: `I scored ${score} in Flip Spider! Can you beat me?`,
+        url: window.location.href,
+        files,
+      };
+      if (navigator.canShare && navigator.canShare({ files })) {
+        await navigator.share(shareData);
+        return;
+      }
+    } catch {}
+    // Fallback to opening a Twitter share with no image if File sharing is unsupported
+    const shareText = `I scored ${score} in Flip Spider! Can you beat me?`;
+    const twitter = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(window.location.href)}`;
+    window.open(twitter, "_blank");
+  }
+
+  function canvasToBlob(c) {
+    return new Promise((resolve) => {
+      if (c.toBlob) {
+        c.toBlob((blob) => resolve(blob || new Blob()), "image/png", 0.95);
+      } else {
+        const dataUrl = c.toDataURL("image/png");
+        const bin = atob(dataUrl.split(",")[1] || "");
+        const arr = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        resolve(new Blob([arr], { type: "image/png" }));
+      }
+    });
   }
 
   // Start loop
