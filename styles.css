@@ -1,0 +1,57 @@
+@font-face {
+  font-family: "InterUI";
+  src: local("Inter"), local("Inter UI");
+  font-display: swap;
+}
+
+:root {
+  --bg: #0c1222;
+  --bg-top: #1a2a6c;
+  --bg-mid: #2a5298;
+  --bg-bot: #4e4376;
+  --accent: #ff4655;
+  --text: #f1f5f9;
+  --muted: #9aa4b2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--bg-top), var(--bg-mid) 50%, var(--bg-bot));
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  font: 500 16px/1.4 InterUI, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+#game {
+  width: min(95vw, 520px);
+  height: calc(min(95vw, 520px) * 1.666);
+  max-height: 92vh;
+  background: #0a0f1e;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.hint {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+
+
+
