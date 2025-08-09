@@ -911,11 +911,8 @@
     ctx.fillText("Flip Spider", VIEW_WIDTH / 2, titleY);
     ctx.font = "500 18px system-ui, -apple-system, Segoe UI, Roboto";
     ctx.fillStyle = (theme || defaultTheme()).hudSecondary;
-    ctx.fillText(
-      "Throw webs to vault between buildings. Pass gaps to score!",
-      VIEW_WIDTH / 2,
-      titleY + 28
-    );
+    ctx.fillText("Throw webs to vault between buildings.", VIEW_WIDTH / 2, titleY + 28);
+    ctx.fillText("Pass Gaps to Score!", VIEW_WIDTH / 2, titleY + 50);
     ctx.restore();
   }
 
