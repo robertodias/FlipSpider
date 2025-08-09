@@ -1113,6 +1113,7 @@
     (e) => {
       e.preventDefault();
       audio.init(); // allow audio context to start on first user gesture
+      requestFullscreenIfPossible();
       const p = getCanvasPointFromClient(e.clientX, e.clientY);
       if (gameState === State.Menu) {
         if (tryHandleMenuClick(p.x, p.y)) return;
@@ -1136,6 +1137,7 @@
     (e) => {
       e.preventDefault();
       audio.init();
+      requestFullscreenIfPossible();
       const t = e.changedTouches && e.changedTouches[0];
       if (!t) return handleAction();
       const p = getCanvasPointFromClient(t.clientX, t.clientY);
@@ -1161,6 +1163,18 @@
     const sx = canvas.width / rect.width;
     const sy = canvas.height / rect.height;
     return { x: (clientX - rect.left) * sx, y: (clientY - rect.top) * sy };
+  }
+
+  function requestFullscreenIfPossible() {
+    const el = document.documentElement; // go fullscreen for the whole page
+    const canFS = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (!canFS) return;
+    const isFS = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+    if (!isFS) {
+      try {
+        canFS.call(el);
+      } catch {}
+    }
   }
 
   function tryHandleMenuClick(px, py) {

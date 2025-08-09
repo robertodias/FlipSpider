@@ -30,6 +30,8 @@ body {
   place-items: center;
   color: var(--text);
   font: 500 16px/1.4 InterUI, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 #game {
@@ -41,6 +43,17 @@ body {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+/* Mobile: fill the viewport, keep aspect ratio, no shadows/radius */
+@media (max-width: 900px) {
+  #game {
+    height: 100dvh;
+    width: min(100vw, calc(100dvh / 1.666));
+    max-height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 
 .hint {
